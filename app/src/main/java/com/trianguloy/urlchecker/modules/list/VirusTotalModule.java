@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.text.Editable;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -88,7 +89,7 @@ class VirusTotalConfig extends AModuleConfig {
 
     @Override
     public void onInitialize(View views) {
-        var edit_key = views.<TextView>findViewById(R.id.api_key);
+        var edit_key = views.<EditText>findViewById(R.id.api_key);
         var test = views.<Button>findViewById(R.id.test);
         var result = views.<TextView>findViewById(R.id.result);
         var testing = views.<ProgressBar>findViewById(R.id.testing);

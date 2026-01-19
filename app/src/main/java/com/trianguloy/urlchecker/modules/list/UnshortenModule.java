@@ -1,8 +1,8 @@
 package com.trianguloy.urlchecker.modules.list;
 
 import static com.trianguloy.urlchecker.utilities.methods.AndroidUtils.MARKER;
-import static com.trianguloy.urlchecker.utilities.methods.AndroidUtils.getStringWithPlaceholder;
 
+import android.content.Context;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.View;
@@ -16,13 +16,12 @@ import com.trianguloy.urlchecker.modules.AModuleConfig;
 import com.trianguloy.urlchecker.modules.AModuleData;
 import com.trianguloy.urlchecker.modules.AModuleDialog;
 import com.trianguloy.urlchecker.modules.AutomationRules;
-import com.trianguloy.urlchecker.modules.DescriptionConfig;
+import com.trianguloy.urlchecker.modules.companions.UnshortenUtility;
 import com.trianguloy.urlchecker.url.UrlData;
+import com.trianguloy.urlchecker.utilities.generics.GenericPref;
 import com.trianguloy.urlchecker.utilities.methods.AndroidUtils;
-import com.trianguloy.urlchecker.utilities.methods.HttpUtils;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.List;
@@ -34,6 +33,12 @@ import java.util.Objects;
  * TODO: the redirect logic here and in the Status check module is very similar, consider extracting a common wrapper
  */
 public class UnshortenModule extends AModuleData {
+
+    public static final String PREF = "unshorten_token";
+
+    static GenericPref.StringPref TOKEN_PREF(Context cntx) {
+        return new GenericPref.StringPref(PREF, "", cntx);
+    }
 
     @Override
     public String getId() {
@@ -52,12 +57,33 @@ public class UnshortenModule extends AModuleData {
 
     @Override
     public AModuleConfig getConfig(ModulesActivity cntx) {
-        return new DescriptionConfig(getStringWithPlaceholder(cntx, R.string.mUnshort_desc, R.string.unshorten_url));
+        return new UnshortenConfig(cntx);
     }
 
     @Override
     public List<AutomationRules.Automation<AModuleDialog>> getAutomations() {
         return (List<AutomationRules.Automation<AModuleDialog>>) (List<?>) UnshortenDialog.AUTOMATIONS;
+    }
+}
+
+class UnshortenConfig extends AModuleConfig {
+
+    final GenericPref.StringPref token;
+
+    public UnshortenConfig(ModulesActivity cntx) {
+        super(cntx);
+        this.token = UnshortenModule.TOKEN_PREF(cntx);
+    }
+
+    @Override
+    public int getLayoutId() {
+        return R.layout.config_unshorten;
+    }
+
+    @Override
+    public void onInitialize(View views) {
+        // set and configure input
+        token.attachToEditText(views.findViewById(R.id.token));
     }
 }
 
@@ -70,11 +96,13 @@ class UnshortenDialog extends AModuleDialog {
 
     private Button unshort;
     private TextView info;
+    private final GenericPref.StringPref token;
 
     private Thread thread = null;
 
     public UnshortenDialog(MainDialog dialog) {
         super(dialog);
+        token = UnshortenModule.TOKEN_PREF(dialog);
     }
 
     @Override
@@ -123,24 +151,7 @@ class UnshortenDialog extends AModuleDialog {
     private void _check(boolean disableUpdates) {
 
         try {
-            // get response
-            var response = new JSONObject(HttpUtils.readFromUrl("https://unshorten.me/json/" + getUrl()));
-            var resolved_url = response.getString("resolved_url");
-            var usage_count = Integer.parseInt(response.optString("usage_count", "0"));
-            var ref = new Object() { // reference object to allow using these inside lambdas
-                int usage_limit = 10; // documented but hardcoded
-                int remaining_calls = usage_limit - usage_count;
-            };
-            var error = response.optString("error", "(no reported error)");
-            var success = response.getBoolean("success");
-
-            // remaining_calls is not documented, but if it's present use it and replace the hardcoded usage_limit
-            try {
-                ref.remaining_calls = Integer.parseInt(response.optString("remaining_calls", ""));
-                ref.usage_limit = usage_count + ref.remaining_calls;
-            } catch (NumberFormatException ignore) {
-                // not present, ignore
-            }
+            UnshortenUtility.UnshortenResult result = UnshortenUtility.unshort(getUrl(), token.get());
 
             // exit if was canceled
             if (Thread.currentThread().isInterrupted()) {
@@ -148,20 +159,20 @@ class UnshortenDialog extends AModuleDialog {
                 return;
             }
 
-            if (!success) {
+            if (!result.success()) {
                 // server error, maybe too many checks
                 getActivity().runOnUiThread(() -> {
-                    info.setText(getActivity().getString(R.string.mUnshort_error, error));
+                    info.setText(getActivity().getString(R.string.mUnshort_error, result.error()));
                     AndroidUtils.setRoundedColor(R.color.warning, info);
                     // allow retries
                     unshort.setEnabled(true);
                 });
-            } else if (Objects.equals(resolved_url, getUrl())) {
+            } else if (Objects.equals(result.finalUrl(), getUrl())) {
                 // same, nothing to replace
                 getActivity().runOnUiThread(() -> {
                     info.setText(getActivity().getString(R.string.mUnshort_notFound));
-                    if (ref.remaining_calls <= ref.usage_limit / 2)
-                        info.append(" (" + getActivity().getString(R.string.mUnshort_pending, ref.remaining_calls, ref.usage_limit) + ")");
+                    if (result.remainingCalls() <= result.usageLimit() / 2)
+                        info.append(" (" + getActivity().getString(R.string.mUnshort_pending, result.remainingCalls(), result.usageLimit()) + ")");
                     AndroidUtils.clearRoundedColor(info);
                 });
             } else {
@@ -170,15 +181,14 @@ class UnshortenDialog extends AModuleDialog {
 
                     if (!disableUpdates) {
                         // unshort to new url
-                        unshortTo(resolved_url);
+                        unshortTo(result.finalUrl());
                     } else {
                         // show unshorted url
-                        info.setText(AndroidUtils.underlineUrl(getActivity().getString(R.string.mUnshort_to, MARKER), resolved_url, this::unshortTo));
+                        info.setText(AndroidUtils.underlineUrl(getActivity().getString(R.string.mUnshort_to, MARKER), result.finalUrl(), this::unshortTo));
                     }
 
-                    if (ref.remaining_calls <= ref.usage_limit / 2)
-                        info.append(" (" + getActivity().getString(R.string.mUnshort_pending, ref.remaining_calls, ref.usage_limit) + ")"
-                        );
+                    if (result.remainingCalls() <= result.usageLimit() / 2)
+                        info.append(" (" + getActivity().getString(R.string.mUnshort_pending, result.remainingCalls(), result.usageLimit()) + ")");
 
                     // a short url can be unshorted to another short url
                     unshort.setEnabled(true);

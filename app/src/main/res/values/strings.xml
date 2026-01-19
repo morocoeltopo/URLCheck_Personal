@@ -410,9 +410,12 @@ This module has been deprecated in favor of the 'Uri parts' module"</string>
     <string name="mUnshort_name">Unshortener</string>
     <string name="mUnshort_unshort">Unshort</string>
     <string name="mUnshort_desc">"This module will unshort links by sending them to %s, which evaluates them on their servers and save the redirection for future requests. Avoid unshortening links with private or sensitive data.
-Their api is rate limited to 10 requests per hour for new checks. The module response will show how many requests you have pending."</string>
+Their free api is rate limited to 10 requests per hour for new checks. The module response will show how many requests you have pending, if needed.
+If you provide a valid token, the module will use the authenticated endpoint, which may be more stable and have different limitations or rates."</string>
+    <string name="mUnshort_token">Token</string>
     <string name="mUnshort_tm">unshorten.me free API by Unshorten.me</string>
     <string name="mUnshort_checking">Checking…</string>
+    <string name="mUnshort_valid">Valid token</string>
     <string name="mUnshort_error">Server error: %s</string>
     <string name="mUnshort_internal">Internal error (%s)</string>
     <string name="mUnshort_to">Unshortens to %s</string>
