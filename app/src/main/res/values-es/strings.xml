@@ -344,7 +344,8 @@ Hay algunos enlaces cuyo único propósito es redirigirte a otro enlace. Si el e
     <!-- -->
     <string name="mUnshort_name">Desacortador</string>
     <string name="mUnshort_unshort">Desacortar</string>
-    <string name="mUnshort_desc">Este módulo deshacerá los enlaces cortos enviándolos a %s, que los evalúa en sus servidores y guarda la redirección para futuras solicitudes. Evite deshacer enlaces cortos con datos privados o sensibles.\nSu API tiene un límite de 10 solicitudes por hora para nuevas verificaciones. La respuesta del módulo mostrará cuántas solicitudes tienes pendientes.</string>
+    <string name="mUnshort_desc">Este módulo deshacerá los enlaces cortos enviándolos a %s, que los evalúa en sus servidores y guarda la redirección para futuras solicitudes. Evite deshacer enlaces cortos con datos privados o sensibles.\nSu API gratuita tiene un límite de 10 solicitudes por hora para nuevas verificaciones. La respuesta del módulo mostrará cuántas solicitudes tienes pendientes, si hace falta.\nSi proporcionas un token válido el módulo usará el endpoint autenticado, que puede ser más estable y tener diferentes limitaciones al gratuito.</string>
+    <string name="mUnshort_token">Token</string>
     <string name="mUnshort_tm">API gratuita de Unshorten.me</string>
     <string name="mUnshort_checking">Comprobando…</string>
     <string name="mUnshort_error">Error de servidor: %s</string>

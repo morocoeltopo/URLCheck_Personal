@@ -10,7 +10,7 @@
     <string name="txt_about">تم إنشاء التطبيق بواسطة %1$s.
 \n
 \nالمساهمون: %2$s.
-\nالمترجمون: %3s.</string>
+\nالمترجمون: %3$s.</string>
     <string name="link_blog">مدونة %s</string>
     <string name="link_changelog">سجل التغييرات</string>
     <string name="link_source">رمز المصدر</string>

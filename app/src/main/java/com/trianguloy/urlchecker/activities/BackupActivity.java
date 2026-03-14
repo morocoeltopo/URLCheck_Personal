@@ -25,6 +25,7 @@ import com.trianguloy.urlchecker.fragments.ResultCodeInjector;
 import com.trianguloy.urlchecker.modules.companions.Hosts;
 import com.trianguloy.urlchecker.modules.companions.VersionManager;
 import com.trianguloy.urlchecker.modules.list.LogModule;
+import com.trianguloy.urlchecker.modules.list.UnshortenModule;
 import com.trianguloy.urlchecker.modules.list.VirusTotalModule;
 import com.trianguloy.urlchecker.modules.list.WebhookModule;
 import com.trianguloy.urlchecker.utilities.AndroidSettings;
@@ -427,7 +428,12 @@ public class BackupActivity extends Activity {
     private static final String EMPTY = ".empty";
     private static final String ADVANCED_EXTRA = "advanced";
 
-    private static final Function<String, Boolean> IS_PREF_SECRET = List.of(VirusTotalModule.PREF, LogModule.PREF, WebhookModule.URL_PREF)::contains;
+    private static final Function<String, Boolean> IS_PREF_SECRET = List.of(
+            VirusTotalModule.PREF,
+            LogModule.PREF,
+            WebhookModule.URL_PREF,
+            UnshortenModule.PREF
+    )::contains;
     private static final Function<String, Boolean> IS_FILE_CACHE = s -> s.startsWith(Hosts.PREFIX);
 
     private void chooseFile(String action, Consumer<Uri> listener) {
