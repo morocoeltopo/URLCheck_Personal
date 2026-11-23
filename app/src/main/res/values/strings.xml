@@ -55,14 +55,23 @@ Translations: %3$s."</string>
     <string name="txt_theme">Theme:</string>
     <string name="spin_darkTheme">Dark</string>
     <string name="spin_lightTheme">Light</string>
-    <string name="txt_width">Dialog width:\nWarning! Small values may hide screen elements.</string>
+    <string name="txt_width">Dialog width (0 for automatic):\nWarning! Small values may hide screen elements.</string>
     <string name="spin_fullWidth">Full</string>
     <string name="spin_dynamicWidth">Dynamic</string>
     <string name="txt_locale">Locale:</string>
     <string name="txt_animation">Enable animations</string>
-    <string name="txt_processText">Sync url with editable text (when the app is opened by long tapping text on an input textbox)</string>
+    <string name="lbl_processUrl">Open in URLCheck</string>
+    <string name="txt_processUrl">Add an \'Open in URLCheck\' entry on text selection menu.</string>
+    <string name="txt_processText">Sync url with editable text (when the app is opened from \'Open in URLCheck\' or similar)</string>
     <string name="btn_tutorialSettings">Repeat tutorial</string>
     <string name="btn_backupRestore">Backup / Restore</string>
+    <string name="txt_verticalPos">Vertical position</string>
+    <string name="spin_top">Top</string>
+    <string name="spin_bottom">Bottom</string>
+    <string name="txt_horizontalPos">Horizontal position</string>
+    <string name="spin_start">Left</string><!-- for rtl locales this should say 'right' -->
+    <string name="spin_end">Right</string><!-- for rtl locales this should say 'left' -->
+    <string name="spin_center">Center</string>
     <!--
         Backup / Restore
     -->
@@ -289,6 +298,7 @@ Note: if you edit the patterns, new built-in patterns from app updates will not 
     <!-- -->
     <string name="mInput_name">Input text</string>
     <string name="mInput_desc">Displays the current URL. Press it to enter edit mode.</string>
+    <string name="mInput_monospace">Use a monospace font to help differentiate similar-looking characters.</string>
     <!-- -->
     <string name="mVT_name">URL Scanner</string>
     <string name="mVT_desc">When this module is enabled you can scan the URL using VirusTotal and check the report. A personal VirusTotal API key is needed for it to work, you can get one after registering for a free account here: %s .</string>
@@ -317,7 +327,8 @@ Note: if you edit the patterns, new built-in patterns from app updates will not 
 If you enable this it will display some internal debug data (like original intent uri), useful for developers.
 
 You can hold to select text."</string>
-    <string name="mD_ctabs">Show debug messages from the custom tabs service</string>
+    <string name="mD_ctabs">Show debug messages from the custom tabs service (even if module is disabled).</string>
+    <string name="mD_toastError">Try to show toast on recoverable internal error (even if module is disabled).</string>
     <string name="mD_show">Load debug data</string>
     <!-- -->
     <string name="mHist_name">History</string>
@@ -450,6 +461,20 @@ This is an advanced version of the 'Queries Remover' module."</string>
     <string name="mWebhook_error">Failed to send to webhook</string>
     <string name="mWebhook_templates">Templates</string>
     <string name="mWebhook_test">Test webhook</string>
+    <!-- -->
+    <string name="mRedir_name">Redirector</string>
+    <string name="mRedir_desc">Simplified version of the Pattern checker module, base implementation and idea by coderj001.\nRedirect URLs by replacing the host.</string>
+    <string name="visual_editor">Visual editor</string>
+    <string name="mRedir_editor">For each rule, when a URL\'s host matches exactly the \"from\" field, a button appears to swap it with the \"to\" host. Enable \"Auto\" to apply the redirect automatically.</string>
+    <string name="mRedir_json">"Redirect json configuration. Format: List of objects where the key is the rule label and the value has the following properties:
+- 'from': string: full domain to match, no regex (if empty the rule will be ignored)
+- 'to': string: full domain that will be replaced (if empty the rule will be ignored)
+- 'auto': boolean: if true will be applied automatically (false by default)"</string>
+    <string name="mRedir_apply">Redirect</string>
+    <string name="mRedir_add">Add rule</string>
+    <string name="mRedir_from">From host</string>
+    <string name="mRedir_to">To host</string>
+    <string name="mRedir_auto">Auto</string>
     <!-- -->
     <string name="mDrawer_name">Drawer</string>
     <string name="mDrawer_desc">All modules below this will be hidden in a drawer. The modules will still work, but will be hidden until you open the drawer. Here you can place modules you rarely use, to avoid clutter.</string>
